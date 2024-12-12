@@ -5,14 +5,15 @@ import { getBytes, keccak256, solidityPacked } from 'ethers';
 
 async function main() {
   const [verifier] = await ethers.getSigners();
-  const owner = ethers.Wallet.createRandom();
-
+  // const owner = ethers.Wallet.createRandom();
+  const owner = verifier;
+  // console.log(await ethers.provider.getBalance (owner.address));return;
   const network = await ethers.provider.getNetwork();
   const chainId = Number(network.chainId.toString());
   const ioIDRegistryFactory = await ethers.getContractFactory('ioIDRegistry');
-  const ioIDRegistry = ioIDRegistryFactory.attach('0x04e4655Cf258EC802D17c23ec6112Ef7d97Fa2aF') as IoIDRegistry;
+  const ioIDRegistry = ioIDRegistryFactory.attach('0x0A7e595C7889dF3652A19aF52C18377bF17e027D') as IoIDRegistry;
   const verifyingProxyFactory = await ethers.getContractFactory('VerifyingProxy');
-  const verifyingProxy = verifyingProxyFactory.attach('0xa5c293471ef44625d9ef079296ff4f223405714d') as VerifyingProxy;
+  const verifyingProxy = verifyingProxyFactory.attach('') as VerifyingProxy;
 
   const device = ethers.Wallet.createRandom();
   const domain = {
@@ -51,12 +52,15 @@ async function main() {
     v,
     r,
     s,
+    { value: '100000000000000000' }
   );
 
-  console.log(`divice nft: ${projectId}`);
+  console.log(`project id: ${projectId}`);
   console.log(`divice nft: ${deviceNFT}`);
   console.log(`divice address: ${device.address}`);
-  console.log(`owner private key: ${owner.privateKey}`);
+  console.log(`device private key: ${device.privateKey}`);
+  console.log(`owner address: ${owner.address}`);
+  // console.log(`owner private key: ${owner.privateKey}`);
   console.log(`register device txHash: ${tx.hash}`);
 }
 
