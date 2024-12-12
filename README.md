@@ -61,3 +61,11 @@ UniversalFactory deployed to 0xe0ac8360Eee3A7A17d1CD64720E61e2fB46ddE51
 
 // DePow 0xa5c293471ef44625d9ef079296ff4f223405714d
 ```
+
+
+
+# Register device on testnet
+
+```
+$ node_modules/.bin/hardhat run scripts/proxy-register.ts --network testnet
+```
