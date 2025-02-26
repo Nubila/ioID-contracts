@@ -160,7 +160,7 @@ contract VerifyingProxy is OwnableUpgradeable, ERC721Holder {
     }
 
     function setDeviceGauge(address _gauge) external onlyOwner {
-        require(IDeviceGauge(_gauge).stakingToken() == address(deviceNFT), "invalid staking token");
+        // require(IDeviceGauge(_gauge).stakingToken() == address(deviceNFT), "invalid staking token");
 
         deviceGauge = _gauge;
         emit DeviceGaugeSetted(_gauge);
@@ -197,15 +197,10 @@ contract VerifyingProxy is OwnableUpgradeable, ERC721Holder {
 
         uint256 _ioIDTokenId = _ioIDRegistry.deviceTokenId(_device);
 
-        if (deviceGauge != address(0)) {
-            (address _walletAddr, ) = IioID(_ioIDRegistry.ioID()).wallet(_ioIDTokenId);
-            IERC6551Executable _wallet = IERC6551Executable(_walletAddr);
-
-            _wallet.execute(address(deviceNFT), 0, abi.encodeCall(IERC721.approve, (deviceGauge, _tokenId)), 0);
-            _wallet.execute(deviceGauge, 0, abi.encodeCall(IDeviceGauge.deposit, (_tokenId, _owner)), 0);
-        }
-
-        IERC721(_ioIDRegistry.ioID()).safeTransferFrom(address(this), _owner, _ioIDTokenId);
+        (address _walletAddr, ) = IioID(_ioIDRegistry.ioID()).wallet(_ioIDTokenId);
+        IERC6551Executable _wallet = IERC6551Executable(_walletAddr);
+        _wallet.execute(address(deviceNFT), 0, abi.encodeCall(IERC721.transferFrom, (_walletAddr, _device, _tokenId)), 0);
+        IERC721(_ioIDRegistry.ioID()).safeTransferFrom(address(this), _device, _ioIDTokenId);
 
         emit Registered(_owner, _device, _tokenId, _ioIDTokenId);
     }
