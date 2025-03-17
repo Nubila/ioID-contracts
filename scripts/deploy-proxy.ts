@@ -4,6 +4,7 @@ import { IoIDStore, VerifyingProxy } from '../typechain-types';
 const PROJECT_REGISTRY_ADDRESS = process.env.PROJECT_REGISTRY;
 const IOIDSTORE_ADDRESS = process.env.IOID_STORE;
 const TOTAL_IOIDS = parseInt(process.env.TOTAL_IOIDS as string);
+const VERIFIER_ADDRESS = process.env.VERIFIER_ADDRESS;
 let DEVICE_NFT_ADDRESS = process.env.DEVICE_NFT;
 let VERIFYING_PROXY = process.env.VERIFYING_PROXY;
 
@@ -16,6 +17,10 @@ async function main() {
     console.log(`Please provide ioIDStore address`);
     return;
   }
+  if (!VERIFIER_ADDRESS) {
+    console.log(`Please provide VERIFIER_ADDRESS address`);
+    return;
+  }
   const [deployer] = await ethers.getSigners();
   console.log(`Deployer: ${await deployer.getAddress()}`);
   const IoIDStore = await ethers.getContractFactory('ioIDStore');
@@ -24,7 +29,6 @@ async function main() {
   const totalPrice = BigInt(TOTAL_IOIDS) * ioidPrice
 
   const deployerBalance = await ethers.provider.getBalance(deployer.address);
-
   if (deployerBalance < totalPrice) throw new Error(`Balance is not enough for ${Number(ethers.formatEther(totalPrice)).toFixed(2)} IOTX`);
 
   if (!DEVICE_NFT_ADDRESS) {
@@ -56,7 +60,7 @@ async function main() {
 
   await verifyingProxy['initialize(uint8,address,string,string,string,uint256)'](
     0,
-    deployer.address,
+    VERIFIER_ADDRESS,
     "Nubila",
     "Nubila Device",
     "Nubila-Device",
